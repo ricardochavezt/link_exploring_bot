@@ -28,6 +28,8 @@ Ese comando 👆 abre un shell en un contenedor con el mismo entorno que AWS Lam
 (que tiene que ser el del proyecto). Basta entonces con hacer `bundle install --path vendor/bundle` para instalar los RubyGems en el directorio vendor/bundle y 
 luego zipear y subir todo a AWS Lambda.
 
+(Fuente: https://blog.francium.tech/using-ruby-gems-with-native-extensions-on-aws-lambda-aa4a3b8862c9)
+
 **A futuro**
 
 Como algún día este bot terminará de revisar todos los links, eventualmente lo podremos reusar para ir revisando los links del siguiente servicio que use y 
