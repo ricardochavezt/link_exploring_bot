@@ -93,8 +93,12 @@ def lambda_handler(event:, context:)
     end
   end
   begin
-    send_valid_links valid_bookmarks
-    puts "Email sent!"
+    if valid_bookmarks.empty?
+      puts "hoy no hay links pasados"
+    else
+      send_valid_links valid_bookmarks
+      puts "Email sent!"
+    end
     bookmarks.update_many({'$set': {visited: true}})
     { statusCode: 200, body: JSON.generate({success: true, visited: visited, valid: valid_bookmarks.size}) }
   rescue Aws::SES::Errors::ServiceError => error
