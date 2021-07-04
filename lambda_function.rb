@@ -68,7 +68,7 @@ end
 
 def lambda_handler(event:, context:)
   client = Mongo::Client.new(ENV["MONGODB_URI"])
-  today = Date.new(2021, 6, 26) #Date.today
+  today = Date.today
   bookmarks = client[:delicious].find({'$expr': {'$and': [
                                                    {'$eq': [{'$month': '$dateCreated'}, today.month]},
                                                    {'$eq': [{'$dayOfMonth': '$dateCreated'}, today.day]}
