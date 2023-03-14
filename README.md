@@ -26,7 +26,8 @@ docker run -it --rm -v "$PWD":/var/task lambci/lambda:build-ruby2.7 bash
 
 Ese comando 👆 abre un shell en un contenedor con el mismo entorno que AWS Lambda para Ruby, montando un volumen sobre el directorio actual 
 (que tiene que ser el del proyecto). Basta entonces con hacer `bundle install --path vendor/bundle` para instalar los RubyGems en el directorio vendor/bundle y 
-luego zipear y subir todo a AWS Lambda.
+luego zipear y subir todo a AWS Lambda.  
+(Tambien es posible ejecutar el comando `bundle install` directamente: `docker run -it --rm -v "$PWD":/var/task lambci/lambda:build-ruby2.7 bundle install`)
 
 (Fuente: https://blog.francium.tech/using-ruby-gems-with-native-extensions-on-aws-lambda-aa4a3b8862c9)
 
