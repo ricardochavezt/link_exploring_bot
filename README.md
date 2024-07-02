@@ -1,37 +1,30 @@
 # Link Exploring Bot 🤖
 
-Este proyecto es solamente una pequeña función en AWS Lambda para validar los links exportados de Delicious y enviar por email los que siguen vigentes.
+(version en español aquí: [README_es.md](README_es.md))
 
-Dado que el otrora gran servicio [Delicious](https://del.icio.us) ahora ya está de caída :(, lo que hice fue exportar todos los links que tenía allí 
-a un archivo JSON (desde el mismo Delicious, que a la fecha - Mayo del 2021 - está activo pero tiene un error de certificado que no deja acceder T-T),
-e importar ese archivo JSON a una base de datos MongoDB.
+This project is only a little AWS Lambda function that validates the links exported from Delicious and sends by email those that are still active.
 
-Después de eso, entra en acción este pequeño lambda, escrito en Ruby, que se conecta al MongoDB, busca los links de la misma fecha (mes - día) que la actual,
-intenta conectarse a cada uno de ellos, y aquellos a los que se ha podido conectar me los envía por correo para poderlos revisar nuevamente, y (eventualmente)
-agregarlos a otro servicio. También marca los que se han revisado cada día y si se ha podido conectar a cada uno, para que no los vuelva a mandar en un futuro
-y, eventualmente, poder filtrarlos y hacer algo con la data.
+Since the formerly great service [Delicious](https://del.icio.us) is now sunsetting :(, I exported all the links I had there to a JSON file (from Delicious itself which, at the moment of writing this - July 2024 - is still active but has an SSL certificate error that prevents access T-T) and import said file into a MongoDB database.
 
-Estoy usando la gema Faraday para las peticiones HTTP; el uso es bien básico pero ha servido muy bien (b'-')b
+After that, this little lambda, written in Ruby, springs into action and connects to the MongoDB database, searches links from the same date (month and day) as the current day, tries to connect to each one, and sends me an email containing those to which it could successfully connect, so I can manually check them and (eventually) add them to another service. It also marks those it has checked each day, and if it could connect to them or not, so that they are not sent again in the future and, eventually, to filter them and do something with the data.
 
-**Complicaciones**
+I'm using the Faraday gem for doing HTTP requests; it's a fairly basic usage but good enough for this little project (b'-')b
 
-El driver oficial de MongoDB para Ruby requiere extensiones nativas, y para usar RubyGems con AWS Lambda hay que incluirlas junto con todo el código que se sube
-(en vendor/bundle), por tanto se necesitaria compilar las extensiones nativas para el SO de AWS Lambda, que no es el mismo que actualmente estoy usando en mi
-estación local 😅.  
-Felizmente, se soluciona todo con Docker y una imagen ya lista:
+**Issues**
+
+The official MongoDB driver for Ruby requires native extensions, and to use RubyGems with AWS Lambda they have to be included together with the uploaded code bundle (in vendor/bundle), so you need to compile the native extensions for the AWS Lambda OS, which is not the same I'm using in my local workstation 😅.
+
+Fortunately, it can all be solved with Docker and a pre-made image:
 
 ````
 docker run -it --rm -v "$PWD":/var/task lambci/lambda:build-ruby2.7 bash
 ````
 
-Ese comando 👆 abre un shell en un contenedor con el mismo entorno que AWS Lambda para Ruby, montando un volumen sobre el directorio actual 
-(que tiene que ser el del proyecto). Basta entonces con hacer `bundle install --path vendor/bundle` para instalar los RubyGems en el directorio vendor/bundle y 
-luego zipear y subir todo a AWS Lambda.  
-(Tambien es posible ejecutar el comando `bundle install` directamente: `docker run -it --rm -v "$PWD":/var/task lambci/lambda:build-ruby2.7 bundle install`)
+That command 👆 opens a shell in a container with the same environment as that of AWS Lambda for Ruby, mounting the current directory (which should be the project directory) as a volume. Then all that is needed is to run `bundle install --path vendor/bundle` to install the RubyGems in the vendor/bundle directory, zip everything up and upload it to AWS Lambda.  
+(It is also possible to directly run the `bundle install` command, like so:  `docker run -it --rm -v "$PWD":/var/task lambci/lambda:build-ruby2.7 bundle install`)
 
-(Fuente: https://blog.francium.tech/using-ruby-gems-with-native-extensions-on-aws-lambda-aa4a3b8862c9)
+(Source: https://blog.francium.tech/using-ruby-gems-with-native-extensions-on-aws-lambda-aa4a3b8862c9)
 
-**A futuro**
+**What's next**
 
-Como algún día este bot terminará de revisar todos los links, eventualmente lo podremos reusar para ir revisando los links del siguiente servicio que use y 
-mantenerlos siempre frescos, o incluso ofrecer la opción de buscar los que ya no funcionan en el Wayback Machine. Pero eso... para la próxima versión ;).
+Since one day this bot will finish checking all the links, we could eventually reuse it to keep checking the links of the next service I use and keep them fresh, or even offer the option to search those that are no longer active in the Wayback Machine. But... that's for the next version ;).
